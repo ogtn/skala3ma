@@ -427,16 +427,6 @@ def competition_admin_post(competition_id):
     comp = {}
     jsonobject = None
 
-    imgfilename = None
-    if 'file1' in request.files:
-        file1 = request.files['file1']
-        if file1.filename is not None and len(file1.filename) > 0:
-            imgfilename = competition_id
-            # this needs a fix for SVG files.. currently they will not be displayed
-            # the fix is to img field to each competition.. currently we retrieve the image as a file
-            imgpath = os.path.join(UPLOAD_FOLDER, imgfilename)
-            file1.save(imgpath)
-
     user = competitionsEngine.get_user_by_email(session['email'])
     competition = competitionsEngine.getCompetition(competition_id)
     resultMessage = None
@@ -455,6 +445,16 @@ def competition_admin_post(competition_id):
     if user is None or competition is None or not competitionsEngine.can_edit_competition(user,competition):
         session["wants_url"] = request.url
         return redirect(url_for("app_ui.fsgtlogin"))
+
+    imgfilename = None
+    if 'file1' in request.files:
+        file1 = request.files['file1']
+        if file1.filename is not None and len(file1.filename) > 0:
+            imgfilename = competition_id
+            # this needs a fix for SVG files.. currently they will not be displayed
+            # the fix is to img field to each competition.. currently we retrieve the image as a file
+            imgpath = os.path.join(UPLOAD_FOLDER, imgfilename)
+            file1.save(imgpath)
 
     
     # add this competition to another user's permissions
